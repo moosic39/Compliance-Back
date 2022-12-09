@@ -1,12 +1,10 @@
 const mysql = require('mysql2')
 require('dotenv').config()
 
-
-
 const infoDB = {
-  host: 'localhost',
-  user: process.env.USERDBMYSQL,
-  password: process.env.PSWDBMYSQL,
+  host: process.env.HOST,
+  user: process.env.USER_DB_MYSQL,
+  password: process.env.PSW_DB_MYSQL,
   database: 'ouroboros'
 }
 
@@ -15,7 +13,8 @@ function createConnection () {
   console.log('connected')
   return connection
 }
-//
+
+
 // function infoAllSite (callback) {
 //   createConnection().query(
 //     'SELECT * FROM Site_Address',
@@ -74,7 +73,7 @@ function createConnection () {
 
 function storeHashedPassword (hash, username, callback) {
   createConnection().query(
-    'UPDATE USERS SET HASH = ? WHERE USERNAME = ?',
+    'UPDATE ouroboros.USERS SET HASH = ? WHERE USERNAME = ?',
     [hash, username],
     callback)
   connectionEnded()
@@ -82,24 +81,32 @@ function storeHashedPassword (hash, username, callback) {
 
 function storeToken (token, username, callback) {
   createConnection().query(
-    'UPDATE USERS SET token = ? WHERE USERNAME = ?',
+    'UPDATE ouroboros.USERS SET TOKEN = ? WHERE USERNAME = ?',
     [token, username],
+    callback)
+  connectionEnded()
+}
+
+function getToken (username,callback){
+  createConnection().query(
+    'SELECT (TOKEN) FROM ouroboros.USERS WHERE USERNAME = ?',
+    [username],
     callback)
   connectionEnded()
 }
 
 function askHashPasswordDB (username, callback) {
   createConnection().query(
-    'SELECT (hash) FROM USERS WHERE username = ?',
+    'SELECT (HASH) FROM ouroboros.USERS WHERE USERNAME = ?',
     [username],
     callback)
   connectionEnded()
 }
 
-function createNewUser (username, callback) {
+function createNewUser (username,email,hash, callback) {
   createConnection().query(
-    'INSERT INTO USERS (username) VALUE (?)',
-    [username],
+    'INSERT INTO ouroboros.USERS (USERNAME,EMAIL,HASH) VALUE (?,?,?)',
+    [username,email,hash],
     callback)
   connectionEnded()
 }
@@ -115,4 +122,5 @@ module.exports = {
   askHashPasswordDB: askHashPasswordDB,
   createNewUser: createNewUser,
   storeToken: storeToken,
+  createConnection:createConnection,
 }
