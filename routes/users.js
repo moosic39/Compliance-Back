@@ -45,7 +45,7 @@ router.post('/signin', (req, res, next) => {
         console.log('isMatch', isMatch)
         if (!isMatch) {
           console.log('wrong password')
-          res.json('wrong password')
+          res.status(401).json('wrong password')
         }
         else {
           Auth.authenticationSuccessful(username,(err,token)=>{
@@ -55,9 +55,7 @@ router.post('/signin', (req, res, next) => {
               .then(()=>{console.log("token added")})
                 .catch((err)=>{console.log({err})})
             res.json({ 'username': username, 'token': token })}
-      )}
-
-
+        )}
       })
     }
   })

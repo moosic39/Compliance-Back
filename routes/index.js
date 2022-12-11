@@ -5,5 +5,9 @@ const router = express.Router();
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
+router.get('/users',(req,res,next)=>{
+  res.status(418).json('hey hey, i loved mister tea')
+})
+
 
 module.exports = router;

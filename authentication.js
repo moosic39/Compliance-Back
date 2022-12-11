@@ -2,8 +2,7 @@ let isUserAuthenticated = false
 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { storeToken } = require('./connectionToDb')
-const { token } = require('morgan')
+
 
 require('dotenv').config()
 
@@ -12,25 +11,25 @@ let restrictedUrls = [
   '/list/'
 ]
 
-function authenticationSuccessful (username,callback) {
+function authenticationSuccessful(username, callback) {
   isUserAuthenticated = true
   return generateAccessToken(username, callback)
 }
 
-function hashPassword (myPlaintextPassword, callback) {
+function hashPassword(myPlaintextPassword, callback) {
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(myPlaintextPassword, salt, callback)
   })
 }
 
-function isPasswordsEqual (passwordToCompare, hashPassword, callback) {
+function isPasswordsEqual(passwordToCompare, hashPassword, callback) {
   bcrypt.compare(passwordToCompare, hashPassword, callback)
 }
 
-function generateAccessToken(username,callback) {
-  let payload = {username:username}
-  console.log('username',payload)
-  return jwt.sign(payload, process.env.SECRET_TOKEN_KEY,{expiresIn:'1d'},  callback)
+function generateAccessToken(username, callback) {
+  let payload = { username: username }
+  console.log('username', payload)
+  return jwt.sign(payload, process.env.SECRET_TOKEN_KEY, { expiresIn: '1d' }, callback)
 }
 
 function authenticateToken(req, res, next) {
@@ -39,7 +38,7 @@ function authenticateToken(req, res, next) {
 
   if (token === null) return res.sendStatus(401)
 
-  jwt.verify(token, process.env.SECRET_TOKEN_KEY,(err, username) => {
+  jwt.verify(token, process.env.SECRET_TOKEN_KEY, (err, username) => {
     console.log(err)
 
     if (err) return res.sendStatus(403)
@@ -50,7 +49,7 @@ function authenticateToken(req, res, next) {
   })
 }
 
-function firewall (req, res, next) {
+function firewall(req, res, next) {
 
   let url = req.url
 
