@@ -1,16 +1,48 @@
 const express = require('express')
-const DB = require('../connectionToDb')
 const Auth = require('../authentication')
 const Users = require('../models/Users')
-
 const { hashPassword } = require('../authentication')
-
 const router = express.Router()
+const { verifyToken } = require('../verifyToken');
+
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
   res.send('respond with a resource')
 })
+
+
+// read User infos
+router.get('/settings/:id', verifyToken, (req, res, next) => {
+  let username = req.params.id
+  console.log(username);
+  const query = Users.where({ username })
+  query.find((err, obj) => {
+    if (err) { console.error({ err }) }
+    if (!obj) { res.status(204).json('no content') }
+    else {
+      res.status(200).json(obj)
+    }
+  })
+})
+
+
+// update User infos
+router.put('/settings/:id', verifyToken, (req, res, next) => {
+  let infos = { ...req.body };
+  hashPassword(req.body.password, (err, hash) => {
+    if (err) console.error({ err });
+    delete infos.password;
+    const user = new Users({ ...infos, hash: hash });
+    console.log(infos);
+    user.updateOne({ username: req.params.id }, { ...infos })
+      .then(() => res.status(201).json('user modified successfully'))
+      .catch(err => res.status(400).json({ err }))
+  })
+})
+
+
+
 
 // signup
 router.post('/signup', (req, res, next) => {
@@ -63,80 +95,4 @@ router.post('/signin', (req, res, next) => {
   })
 })
 
-//   DB.askHashPasswordDB(username, async (err, result) => {
-//     // if (err) {
-//     //   console.error(err)
-//     //   res.json('no corresponding username')
-//     //   console.log(result)
-//     // }
-//     // let storedHash = await result[0].hash
-//     //
-//     //   await Auth.isPasswordsEqual(password, storedHash, (err, isMatch) => {
-//     //     if (err) console.error(err)
-//     //     console.log('isMatch', isMatch)
-//     //
-//     //     if (isMatch) {
-//     //       let token = Auth.authenticationSuccessful(username)
-//     //       res.json({ 'username': username, 'token': token })
-//     //     }
-//     //     if (!isMatch) {
-//     //       console.log('wrong password')
-//     //       res.json('wrong password')
-//     //     }
-//     //   })
-//
-//   })
-// })
-
-/*
-app.post('/signIn', (request, response) => {
-  let json = request.body
-  let login = json.username
-  let psw = json.password
-  createNewUser(login, (err, username) => {
-    hashPassword(psw, (err, hash) => {
-      if (err) console.error(err)
-      storeHashedPassword(hash, login, (err, data) => {
-        if (err) console.error(err)
-        console.log('message', data)
-      })
-      response.json({ message: 'you\'re successfully signin' })
-    })
-  })
-})
-
-app.post('/auth', (request, response) => {
-    let json = request.body
-    let login = json.username
-    let psw = json.password
-
-    console.log('login', login, '\n', 'psw', psw)
-
-    askHashPasswordDB(login, async (err, result) => {
-      if (err) {
-        console.error(err)
-        response.json('no corresponding username')
-      }
-      let storedHash = await result[0].hash
-      await hashPassword(psw, async (err, hash) => {
-        if (err) console.error(err)
-        await isPasswordsEqual(psw, storedHash, (err, isMatch) => {
-          if (err) console.error(err)
-          console.log('isMatch', isMatch)
-
-          if (isMatch) {
-            let token = authenticationSuccessful(login)
-            response.json({ 'username': login, 'token': token })
-          }
-          if (!isMatch) {
-            console.log('stored', storedHash)
-            console.log('hash', hash)
-            console.log('wrong password')
-            response.json('wrong password')
-          }
-        })
-      })
-    })
-  })
-*/
 module.exports = router
