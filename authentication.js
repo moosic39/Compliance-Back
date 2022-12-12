@@ -32,22 +32,22 @@ function generateAccessToken(username, callback) {
   return jwt.sign(payload, process.env.SECRET_TOKEN_KEY, { expiresIn: '1d' }, callback)
 }
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
+// function authenticateToken(req, res, next) {
+//   const authHeader = req.headers['authorization']
+//   const token = authHeader && authHeader.split(' ')[1]
 
-  if (token === null) return res.sendStatus(401)
+//   if (token === null) return res.sendStatus(401)
 
-  jwt.verify(token, process.env.SECRET_TOKEN_KEY, (err, username) => {
-    console.log(err)
+//   jwt.verify(token, process.env.SECRET_TOKEN_KEY, (err, username) => {
+//     console.log(err)
 
-    if (err) return res.sendStatus(403)
+//     if (err) return res.sendStatus(403)
 
-    req.user = username
+//     req.user = username
 
-    next()
-  })
-}
+//     next()
+//   })
+// }
 
 function firewall(req, res, next) {
 

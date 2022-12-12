@@ -35,12 +35,12 @@ router.post('/signin', (req, res, next) => {
   const query = Users.where({ username })
   query.findOne((err, obj) => {
     if (err) console.log({ err })
-    if (!obj){console.log("no user")}
+    if (!obj) { console.log("no user") }
     else {
       let storedHash = obj.hash
-      console.log('stored',storedHash)
+      console.log('stored', storedHash)
 
-      Auth.isPasswordsEqual(password,storedHash, (err, isMatch) => {
+      Auth.isPasswordsEqual(password, storedHash, (err, isMatch) => {
         if (err) console.log({ err });
         console.log('isMatch', isMatch)
         if (!isMatch) {
@@ -48,14 +48,16 @@ router.post('/signin', (req, res, next) => {
           res.status(401).json('wrong password')
         }
         else {
-          Auth.authenticationSuccessful(username,(err,token)=>{
-            if (err) console.log({err});
-            console.log('token',token)
-            Users.updateOne({username:username},{token:token})
-              .then(()=>{console.log("token added")})
-                .catch((err)=>{console.log({err})})
-            res.json({ 'username': username, 'token': token })}
-        )}
+          Auth.authenticationSuccessful(username, (err, token) => {
+            if (err) console.log({ err });
+            console.log('token', token)
+            Users.updateOne({ username: username }, { token: token })
+              .then(() => { console.log("token added") })
+              .catch((err) => { console.log({ err }) })
+            res.json({ 'username': username, 'token': token })
+          }
+          )
+        }
       })
     }
   })
@@ -86,55 +88,55 @@ router.post('/signin', (req, res, next) => {
 //   })
 // })
 
-  /*
-  app.post('/signIn', (request, response) => {
+/*
+app.post('/signIn', (request, response) => {
+  let json = request.body
+  let login = json.username
+  let psw = json.password
+  createNewUser(login, (err, username) => {
+    hashPassword(psw, (err, hash) => {
+      if (err) console.error(err)
+      storeHashedPassword(hash, login, (err, data) => {
+        if (err) console.error(err)
+        console.log('message', data)
+      })
+      response.json({ message: 'you\'re successfully signin' })
+    })
+  })
+})
+
+app.post('/auth', (request, response) => {
     let json = request.body
     let login = json.username
     let psw = json.password
-    createNewUser(login, (err, username) => {
-      hashPassword(psw, (err, hash) => {
+
+    console.log('login', login, '\n', 'psw', psw)
+
+    askHashPasswordDB(login, async (err, result) => {
+      if (err) {
+        console.error(err)
+        response.json('no corresponding username')
+      }
+      let storedHash = await result[0].hash
+      await hashPassword(psw, async (err, hash) => {
         if (err) console.error(err)
-        storeHashedPassword(hash, login, (err, data) => {
+        await isPasswordsEqual(psw, storedHash, (err, isMatch) => {
           if (err) console.error(err)
-          console.log('message', data)
+          console.log('isMatch', isMatch)
+
+          if (isMatch) {
+            let token = authenticationSuccessful(login)
+            response.json({ 'username': login, 'token': token })
+          }
+          if (!isMatch) {
+            console.log('stored', storedHash)
+            console.log('hash', hash)
+            console.log('wrong password')
+            response.json('wrong password')
+          }
         })
-        response.json({ message: 'you\'re successfully signin' })
       })
     })
   })
-
-  app.post('/auth', (request, response) => {
-      let json = request.body
-      let login = json.username
-      let psw = json.password
-
-      console.log('login', login, '\n', 'psw', psw)
-
-      askHashPasswordDB(login, async (err, result) => {
-        if (err) {
-          console.error(err)
-          response.json('no corresponding username')
-        }
-        let storedHash = await result[0].hash
-        await hashPassword(psw, async (err, hash) => {
-          if (err) console.error(err)
-          await isPasswordsEqual(psw, storedHash, (err, isMatch) => {
-            if (err) console.error(err)
-            console.log('isMatch', isMatch)
-
-            if (isMatch) {
-              let token = authenticationSuccessful(login)
-              response.json({ 'username': login, 'token': token })
-            }
-            if (!isMatch) {
-              console.log('stored', storedHash)
-              console.log('hash', hash)
-              console.log('wrong password')
-              response.json('wrong password')
-            }
-          })
-        })
-      })
-    })
-  */
-  module.exports = router
+*/
+module.exports = router
