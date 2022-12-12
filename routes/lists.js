@@ -24,7 +24,7 @@ router.post('/:id', verifyToken,(req, res, next) => {
     .catch(err => res.status(400).json({ err }))
 
 })
-router.get("/:id", (req, res, next) => {
+router.get("/:id", verifyToken, (req, res, next) => {
   let username = req.params.id
   const query = Lists.where({ username })
   query.find((err, obj) => {
