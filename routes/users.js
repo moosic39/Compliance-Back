@@ -21,6 +21,10 @@ router.get('/settings/:id', verifyToken, (req, res, next) => {
     if (err) { console.error({ err }) }
     if (!obj) { res.status(204).json('no content') }
     else {
+      console.log("1",obj[0].hash)
+      // before finding a better way to delete hash before sending
+      obj[0].hash =''
+      console.log("2",obj[0])
       res.status(200).json(obj)
     }
   })

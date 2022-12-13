@@ -15,7 +15,7 @@ function verifyToken(req, res, next) {
         // verify if the url request correspond to the token's owner
         var username = decoded.username
         console.log(username)
-        console.log('heyhey', req.params.id)
+        console.log("don't play with me", req.params.id)
         if (req.params.id !== username) { return res.status(403).json('YOU ARE NOT ALLOWED') }
 
         const query = Users.where({ username })
