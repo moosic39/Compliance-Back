@@ -6,6 +6,7 @@ const router = express.Router()
 const { verifyToken } = require('../verifyToken');
 
 
+
 /* GET users listing. */
 router.get('/', (req, res, next) => {
   res.send('respond with a resource')
@@ -21,10 +22,8 @@ router.get('/settings/:id', verifyToken, (req, res, next) => {
     if (err) { console.error({ err }) }
     if (!obj) { res.status(204).json('no content') }
     else {
-      console.log("1",obj[0].hash)
       // before finding a better way to delete hash before sending
       obj[0].hash =''
-      console.log("2",obj[0])
       res.status(200).json(obj)
     }
   })
@@ -34,16 +33,23 @@ router.get('/settings/:id', verifyToken, (req, res, next) => {
 // update User infos
 router.put('/settings/:id', verifyToken, (req, res, next) => {
   let infos = { ...req.body };
+  console.log('req',infos)
+  if (req.body.password !== ''){
   hashPassword(req.body.password, (err, hash) => {
-    if (err) console.error({ err });
+    if (err) console.log({ err });
     delete infos.password;
-    const user = new Users({ ...infos, hash: hash });
-    console.log(infos);
-    user.updateOne({ username: req.params.id }, { ...infos })
+    infos.hash = hash
+    console.log(infos)
+    // for (let info in infos){
+    //   console.log(info)
+    //   if (info===''){infos -= info}
+    // }
+    console.log("les infos", { ...infos });
+    Users.updateOne({ username: req.params.id }, { ...infos })
       .then(() => res.status(201).json('user modified successfully'))
       .catch(err => res.status(400).json({ err }))
   })
-})
+}})
 
 
 
