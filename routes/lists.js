@@ -20,7 +20,7 @@ router.post('/:id', verifyToken,(req, res, next) => {
     medications: medications,
   })
   list.save()
-    .then(() => res.status(201).json('medications saved'))
+    .then(() => res.status(201).json({status:201, message:'medications saved' }))
     .catch(err => res.status(400).json({ err }))
 
 })

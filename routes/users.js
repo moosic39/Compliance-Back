@@ -85,7 +85,9 @@ router.post('/signin', (req, res, next) => {
   const query = Users.where({ username })
   query.findOne((err, obj) => {
     if (err) console.log({ err })
-    if (!obj) { console.log("no user") }
+    if (!obj) {
+      console.log("no user");
+      res.status(401).json({ status: 401 })}
     else {
       let storedHash = obj.hash
       console.log('stored', storedHash)
@@ -95,7 +97,7 @@ router.post('/signin', (req, res, next) => {
         console.log('isMatch', isMatch)
         if (!isMatch) {
           console.log('wrong password')
-          res.status(401).json('wrong password')
+          res.status(401).json({ status:401 })
         }
         else {
           Auth.authenticationSuccessful(username, (err, token) => {
