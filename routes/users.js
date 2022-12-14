@@ -51,6 +51,14 @@ router.put('/settings/:id', verifyToken, (req, res, next) => {
   })
 }})
 
+// delete user infos
+router.delete('/settings/:id', verifyToken, (req,res,next)=>{
+  let username = req.params.id
+  // let id = req.body.id
+  Users.deleteOne({username:username})
+    .then(()=>res.status(204))
+    .catch(err => res.status(400).json({ err }))
+})
 
 
 
