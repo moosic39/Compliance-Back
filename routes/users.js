@@ -23,7 +23,7 @@ router.get('/settings/:id', verifyToken, (req, res, next) => {
     if (!obj) { res.status(204).json('no content') }
     else {
       // before finding a better way to delete hash before sending
-      obj[0].hash =''
+      obj[0].hash = ''
       res.status(200).json(obj)
     }
   })
@@ -33,30 +33,31 @@ router.get('/settings/:id', verifyToken, (req, res, next) => {
 // update User infos
 router.put('/settings/:id', verifyToken, (req, res, next) => {
   let infos = { ...req.body };
-  console.log('req',infos)
-  if (req.body.password !== ''){
-  hashPassword(req.body.password, (err, hash) => {
-    if (err) console.log({ err });
-    delete infos.password;
-    infos.hash = hash
-    console.log(infos)
-    // for (let info in infos){
-    //   console.log(info)
-    //   if (info===''){infos -= info}
-    // }
-    console.log("les infos", { ...infos });
-    Users.updateOne({ username: req.params.id }, { ...infos })
-      .then(() => res.status(201).json('user modified successfully'))
-      .catch(err => res.status(400).json({ err }))
-  })
-}})
+  console.log('req', infos)
+  if (req.body.password !== '') {
+    hashPassword(req.body.password, (err, hash) => {
+      if (err) console.log({ err });
+      delete infos.password;
+      infos.hash = hash
+      console.log(infos)
+      // for (let info in infos){
+      //   console.log(info)
+      //   if (info===''){infos -= info}
+      // }
+      console.log("les infos", { ...infos });
+      Users.updateOne({ username: req.params.id }, { ...infos })
+        .then(() => res.status(201).json('user modified successfully'))
+        .catch(err => res.status(400).json({ err }))
+    })
+  }
+})
 
 // delete user infos
-router.delete('/settings/:id', verifyToken, (req,res,next)=>{
+router.delete('/settings/:id', verifyToken, (req, res, next) => {
   let username = req.params.id
   // let id = req.body.id
-  Users.deleteOne({username:username})
-    .then(()=>res.status(204))
+  Users.deleteOne({ username: username })
+    .then(() => res.status(204))
     .catch(err => res.status(400).json({ err }))
 })
 
@@ -87,7 +88,8 @@ router.post('/signin', (req, res, next) => {
     if (err) console.log({ err })
     if (!obj) {
       console.log("no user");
-      res.status(401).json({ status: 401 })}
+      res.status(401).json({ status: 401 })
+    }
     else {
       let storedHash = obj.hash
       console.log('stored', storedHash)
@@ -97,7 +99,7 @@ router.post('/signin', (req, res, next) => {
         console.log('isMatch', isMatch)
         if (!isMatch) {
           console.log('wrong password')
-          res.status(401).json({ status:401 })
+          res.status(401).json({ status: 401 })
         }
         else {
           Auth.authenticationSuccessful(username, (err, token) => {
@@ -106,7 +108,7 @@ router.post('/signin', (req, res, next) => {
             Users.updateOne({ username: username }, { token: token })
               .then(() => { console.log("token added") })
               .catch((err) => { console.log({ err }) })
-            res.json({ 'username': username, 'token': token })
+            res.status(200).json({ 'username': username, 'token': token })
           }
           )
         }
