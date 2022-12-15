@@ -1,7 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Lists = require('../models/Lists')
-const { disconnect } = require('mongoose')
 
 const DB_NAME = "COMPLIANCE"
 const host = "@cluster0.01kzowe.mongodb.net"
@@ -15,7 +14,7 @@ mongoose.connect(uri,
   .then(async () => {
     console.log('Connexion to MongoDB with success !');
     await populate().then(() => {
-      console.log('Disconnexion to MongoDB with success')
+      console.log('Disconnection to MongoDB with success')
     }).catch((err) => {
       console.log({ err })
     })
@@ -30,39 +29,6 @@ mongoose.connect(uri,
 
 
 async function populate() {
-
-  // Users.findOne({ username: username }).then(async ()=>{await Users.deleteOne({ username: username })
-  //   .then(() => { console.log('user deleted') })
-  //   .catch((err) => { console.log({ err }) })})
-
-
-
-  // const user = new Users({
-  //   username: "batman",
-  //   hash: "$2a$10$6mZIHBL7OV7.SmtQfBUseeR86lPzE.ckXMyM431MhZMH33FGfIPj6", // correspond to batman
-  //   email: "batman@wayne.com",
-  //   firstname: "Bruce",
-  //   lastname: "Wayne",
-  //   doctor: "DrStrange",
-  //   doctoremail: "hugo.strange@arkham.com",
-  // })
-  // await user.save()
-  //   .then(() => { console.log("user added") })
-  //   .catch((err) => { console.log({ err }) })
-
-
-
-  // await List.deleteOne({ username: username })
-  //   .then(() => { console.log('user deleted') })
-  //   .catch((err) => { console.log({ err }) })
-
-
-  // let users = ["batman", "robin", "alfred", "nightwing", "redhood", "batgirl", "catwoman", "ace", "poulet"];
-  // for (let user in users) {
-  //   await Users.deleteOne({ username: user })
-  //     .then(() => { console.log(user[1],'deleted') })
-  //     .catch((err) => { console.log({ err }) })
-  // }
 
   await Lists.insertMany([{
     timestamp: 1671014939557,

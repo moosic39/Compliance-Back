@@ -39,11 +39,6 @@ router.put('/settings/:id', verifyToken, (req, res, next) => {
       if (err) console.log({ err });
       delete infos.password;
       infos.hash = hash
-      console.log(infos)
-      // for (let info in infos){
-      //   console.log(info)
-      //   if (info===''){infos -= info}
-      // }
       console.log("les infos", { ...infos });
       Users.updateOne({ username: req.params.id }, { ...infos })
         .then(() => res.status(201).json('user modified successfully'))

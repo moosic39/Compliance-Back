@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const listsSchema = mongoose.Schema({
   timestamp: { type: Number, timestamp: true, required: true, unique: true },
-  //{Type:Number} gte date.now - 7j
   username: { type: String, required: true },
   medications: {
     medication1: { type: String, },
